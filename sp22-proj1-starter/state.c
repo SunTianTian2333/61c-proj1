@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "snake_utils.h"
 #include "state.h"
 
@@ -69,12 +70,25 @@ game_state_t* create_default_state() {
 /* Task 2 */
 void free_state(game_state_t* state) {
   // TODO: Implement this function.
+  for(int i=0;i<state->y_size;i++){
+     free(state->board[i]);
+  }
+  free(state->board);
+  free(state->snakes);
+  free(state);
   return;
 }
 
 /* Task 3 */
 void print_board(game_state_t* state, FILE* fp) {
   // TODO: Implement this function.
+  for(int i=0;i<state->y_size;i++){
+     for(int j=0;j<state->x_size;j++){
+        fprintf(fp,"%c",state->board[i][j]);
+     }
+        fprintf(fp,"\n");
+     }
+     
   return;
 }
 
@@ -88,16 +102,23 @@ void save_board(game_state_t* state, char* filename) {
 /* Task 4.1 */
 static bool is_tail(char c) {
   // TODO: Implement this function.
-  return true;
+  if(c=='w'||c=='a'||c=='s'||c=='d')
+     return true;
+     else return false;
 }
 
 static bool is_snake(char c) {
   // TODO: Implement this function.
-  return true;
+  if(is_tail(c))
+     return true;
+  else if(c=='^'||c=='<'||c=='>'||c=='v'||c=='x')
+       return true;
+  else return false;
 }
 
 static char body_to_tail(char c) {
   // TODO: Implement this function.
+  
   return '?';
 }
 
