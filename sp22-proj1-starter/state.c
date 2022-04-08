@@ -118,24 +118,66 @@ static bool is_snake(char c) {
 
 static char body_to_tail(char c) {
   // TODO: Implement this function.
-  
-  return '?';
+  if(c=='^')
+    return 'w';
+  if(c=='<')
+    return 'a';
+  if(c=='>')
+    return 'd';
+  if(c=='v')
+    return 's';
+  else
+       return '?';
 }
 
 static int incr_x(char c) {
   // TODO: Implement this function.
+  if(c=='>'||c=='d')
+    return 1;
+  if(c=='<'||c=='a')
+    return -1;
   return 0;
 }
 
 static int incr_y(char c) {
   // TODO: Implement this function.
+  if(c=='v'||c=='s')
+    return 1;
+  if(c=='w'||c=='^')
+    return -1;
   return 0;
 }
 
 /* Task 4.2 */
 static char next_square(game_state_t* state, int snum) {
   // TODO: Implement this function.
-  return '?';
+  int num=-1;
+  char t='?';
+  for(int y=0;y<state->y_size;y++)
+     for(int x=0;x<state->x_size;x++){
+         if(is_tail(get_board_at(state,x,y)))
+            num++;
+         if(num==snum){
+           t=get_board_at(state,x,y);
+           while(is_snake(t)){
+                if(incr_x(t)==1){
+                   t=state->board[y][++x];
+                   }
+                else if(incr_x(t)==-1){
+                   t=state->board[y][--x];
+                   }
+                if(incr_y(t)==1){
+                   t=state->board[++y][x];
+                   }
+                else if(incr_y(t)==-1){
+                   t=state->board[--y][x];
+                   }
+                if(t=='x')
+                  break;
+               }
+            return t;
+         }              
+     }     
 }
 
 /* Task 4.3 */

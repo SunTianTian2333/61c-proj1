@@ -99,13 +99,28 @@ bool assert_state_equals(game_state_t* expected, game_state_t* actual) {
 
 bool test_is_tail() {
   // TODO: Implement this if you'd like!
-  printf("%s\n", "test_is_tail doesn't have any tests.");
+  char c[8]={'w','s','a','d','<','>','K','h'};
+  for(int i=0;i<8;i++){
+
+     if(is_tail(c[i])&&i>4){
+     printf("test2 false");
+     return false;
+     }    
+     }  
+
+  printf("%s\n", "testing passed");
   return true;
 }
 
 bool test_is_snake() {
   // TODO: Implement this if you'd like!
-  printf("%s\n", "test_is_snake doesn't have any tests.");
+  char c[10]={'w','s','a','d','<','>','K','h','^','v'};
+  int  a[10]={1,1,1,1,1,1,0,0,1,1};
+  for(int i=0;i<10;i++){
+     if(!(a[i]==is_snake(c[i])))
+       return false;
+     }
+  printf("%s\n", "test passed");
   return true;
 }
 
