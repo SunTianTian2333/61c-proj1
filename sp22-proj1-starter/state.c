@@ -39,7 +39,7 @@ game_state_t* create_default_state() {
   state->y_size=10;
   
   state->num_snakes=1;
-  state->snakes=(snake_t *)malloc(sizeof(snake_t));
+  state->snakes=(snake_t *)malloc(sizeof(snake_t)*state->num_snakes);
   assert(state->snakes);
   state->snakes->tail_x=4;
   state->snakes->tail_y=4;
@@ -174,6 +174,7 @@ static char next_square(game_state_t* state, int snum) {
                    }
                 if(t=='x')
                   break;
+          
                }
             return t;
          }              
@@ -183,6 +184,40 @@ static char next_square(game_state_t* state, int snum) {
 /* Task 4.3 */
 static void update_head(game_state_t* state, int snum) {
   // TODO: Implement this function.
+  int s;
+  int num=-1;
+  char t='?';
+  for(int y=0;y<state->y_size;y++)
+     for(int x=0;x<state->x_size;x++){
+         if(is_tail(get_board_at(state,x,y)))
+            num++;
+         if(num==snum){
+           for(int i=0;i<state->num_snakes;i++)
+           {
+              if(state->snakes[i].tail_y==y&&state->snakes[i].tail_x==x){
+                   t=get_board_at(state,state->snakes[i].head_x,state->snakes[i].head_y);
+   
+                   if(incr_x(t)==1){
+                       state->board[state->snakes[i].head_y][state,state->snakes[i].head_x+1]=t;
+                       state->snakes[i].head_x+=1;
+                   }
+                   else if(incr_x(t)==-1){
+                       state->board[state->snakes[i].head_y][state,state->snakes[i].head_x-1]=t;
+                       state->snakes[i].head_x-=1;
+                   }
+                   if(incr_y(t)==1){
+                       state->board[state->snakes[i].head_y+1][state,state->snakes[i].head_x]=t;
+                       state->snakes[i].head_y+=1;
+                   }
+                   else if(incr_y(t)==-1){
+                       state->board[state->snakes[i].head_y-1][state,state->snakes[i].head_x]=t;
+                       state->snakes[i].head_y-=1;
+                   }          
+                 
+             }  
+          }
+         } 
+    }    
   return;
 }
 

@@ -9,7 +9,6 @@ typedef struct snake_t {
   unsigned int tail_y;
   unsigned int head_x;
   unsigned int head_y;
-
   bool live;
 } snake_t;
 
