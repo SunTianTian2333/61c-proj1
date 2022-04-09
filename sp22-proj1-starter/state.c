@@ -184,7 +184,6 @@ static char next_square(game_state_t* state, int snum) {
 /* Task 4.3 */
 static void update_head(game_state_t* state, int snum) {
   // TODO: Implement this function.
-  int s;
   int num=-1;
   char t='?';
   for(int y=0;y<state->y_size;y++)
@@ -198,19 +197,19 @@ static void update_head(game_state_t* state, int snum) {
                    t=get_board_at(state,state->snakes[i].head_x,state->snakes[i].head_y);
    
                    if(incr_x(t)==1){
-                       state->board[state->snakes[i].head_y][state,state->snakes[i].head_x+1]=t;
+                       state->board[state->snakes[i].head_y][state->snakes[i].head_x+1]=t;
                        state->snakes[i].head_x+=1;
                    }
                    else if(incr_x(t)==-1){
-                       state->board[state->snakes[i].head_y][state,state->snakes[i].head_x-1]=t;
+                       state->board[state->snakes[i].head_y][state->snakes[i].head_x-1]=t;
                        state->snakes[i].head_x-=1;
                    }
                    if(incr_y(t)==1){
-                       state->board[state->snakes[i].head_y+1][state,state->snakes[i].head_x]=t;
+                       state->board[state->snakes[i].head_y+1][state->snakes[i].head_x]=t;
                        state->snakes[i].head_y+=1;
                    }
                    else if(incr_y(t)==-1){
-                       state->board[state->snakes[i].head_y-1][state,state->snakes[i].head_x]=t;
+                       state->board[state->snakes[i].head_y-1][state->snakes[i].head_x]=t;
                        state->snakes[i].head_y-=1;
                    }          
                  
@@ -224,6 +223,70 @@ static void update_head(game_state_t* state, int snum) {
 /* Task 4.4 */
 static void update_tail(game_state_t* state, int snum) {
   // TODO: Implement this function.
+  int num=-1;
+  char t='?';
+  for(int y=0;y<state->y_size;y++)
+     for(int x=0;x<state->x_size;x++){
+         if(is_tail(get_board_at(state,x,y)))
+            num++;
+         if(num==snum){
+            for(int i=0;i<state->num_snakes;i++)
+               {
+                  if(state->snakes[i].tail_y==y&&state->snakes[i].tail_x==x){
+                     t=get_board_at(state,x,y);
+                     if(incr_x(t)==1){
+                       state->board[y][x]=' ';
+                       if(state->board[y][x+1]=='>')
+                          state->board[y][x+1]='d';
+                       if(state->board[y][x+1]=='^')
+                          state->board[y][x+1]='w';
+                       if(state->board[y][x+1]=='<')
+                          state->board[y][x+1]='a';
+                       if(state->board[y][x+1]=='v')
+                          state->board[y][x+1]='s';
+                       state->snakes[i].tail_x++;
+                      }
+                     if(incr_x(t)==-1){
+                       state->board[y][x]=' ';
+                       if(state->board[y][x-1]=='>')
+                          state->board[y][x-1]='d';
+                       if(state->board[y][x-1]=='^')
+                          state->board[y][x-1]='w';
+                       if(state->board[y][x-1]=='<')
+                          state->board[y][x-1]='a';
+                       if(state->board[y][x-1]=='v')
+                          state->board[y][x-1]='s';
+                       state->snakes[i].tail_x--;
+                      }
+                     if(incr_y(t)==1){
+                       state->board[y][x]=' ';
+                       if(state->board[y+1][x]=='>')
+                          state->board[y+1][x]='d';
+                       if(state->board[y+1][x]=='^')
+                          state->board[y+1][x]='w';
+                       if(state->board[y+1][x]=='<')
+                          state->board[y+1][x]='a';
+                       if(state->board[y+1][x]=='v')
+                          state->board[y+1][x]='s';
+                       state->snakes[i].tail_y++;
+                      }
+                     if(incr_y(t)==-1){
+                       state->board[y][x]=' ';
+                       if(state->board[y-1][x]=='>')
+                          state->board[y-1][x]='d';
+                       if(state->board[y-1][x]=='^')
+                          state->board[y-1][x]='w';
+                       if(state->board[y-1][x]=='<')
+                          state->board[y-1][x]='a';
+                       if(state->board[y-1][x]=='v')
+                          state->board[y-1][x]='s';
+                       state->snakes[i].tail_y--;
+                      }
+                   }
+              }
+          }
+         } 
+        
   return;
 }
 
