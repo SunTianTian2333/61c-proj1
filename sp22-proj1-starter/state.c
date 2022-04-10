@@ -163,16 +163,16 @@ static char next_square(game_state_t* state, int snum) {
            if(state->snakes[i].tail_x==x&&y==state->snakes[i].tail_y){
                 t=get_board_at(state,state->snakes[i].head_x,state->snakes[i].head_y);
                 if(incr_x(t)==1){
-                   t=state->board[state->snakes[i].head_y][state,state->snakes[i].head_x+1];
+                   t=state->board[state->snakes[i].head_y][state->snakes[i].head_x+1];
                    }
                 else if(incr_x(t)==-1){
-                   t=state->board[state->snakes[i].head_y][state,state->snakes[i].head_x-1];
+                   t=state->board[state->snakes[i].head_y][state->snakes[i].head_x-1];
                    }
                 if(incr_y(t)==1){
-                   t=state->board[state->snakes[i].head_y+1][state,state->snakes[i].head_x];
+                   t=state->board[state->snakes[i].head_y+1][state->snakes[i].head_x];
                    }
                 else if(incr_y(t)==-1){
-                   t=state->board[state->snakes[i].head_y-1][state,state->snakes[i].head_x];
+                   t=state->board[state->snakes[i].head_y-1][state->snakes[i].head_x];
                    }
                 
                   
@@ -340,19 +340,116 @@ void update_state(game_state_t* state, int (*add_food)(game_state_t* state)) {
 /* Task 5 */
 game_state_t* load_board(char* filename) {
   // TODO: Implement this function.
-  int x=20;
-  int y=20;
-  return NULL;
+  FILE *fp=fopen(filename,"r");
+  int num1=0;
+  int num2=0;
+  int num3=0;
+  char temp='?';
+  while(fscanf(fp,"%c",&temp)!=EOF){
+       if(temp!='\n')
+         num1++;
+       else{
+       num3=num1;
+       num1=0;
+       num2++;
+       }
+  }
+  fclose(fp);
+  fp=fopen(filename,"r");
+  
+  game_state_t *state=(game_state_t *)malloc(sizeof(game_state_t)); 
+  state->x_size=num3;
+  state->y_size=num2;
+  state->board=(char **)malloc(sizeof(char*)*state->y_size);
+  char buf;
+  for(int i=0;i<state->y_size;i++){
+      state->board[i]=(char *)malloc(sizeof(char)*state->x_size);
+      for(int k=0;k<state->x_size;k++){
+          buf=fgetc(fp);
+          if(buf=='\n')
+            buf=fgetc(fp);
+          state->board[i][k]=buf;
+          }
+  }
+  fclose(fp);
+  return state;
 }
 
 /* Task 6.1 */
 static void find_head(game_state_t* state, int snum) {
   // TODO: Implement this function.
+  for(int y=0;y<state->y_size;y++)
+     for(int x=0;x<state->x_size;x++)
+         if(is_tail(get_board_at(state,x,y)))
+            for(int i=0;i<state->num_snakes;i++)
+                if(state->snakes[i].tail_x==x&&state->snakes[i].tail_y==y){
+                  char t=get_board_at(state,x,y);
+                      while(is_snake(t)){
+                           if(incr_x(t)==1){
+                            t=get_board_at(state,++x,y);
+                            if(!is_snake(t)){
+                               --x;
+                               break;
+                               }
+                            }
+                           else if(incr_x(t)==-1){
+                            t=get_board_at(state,--x,y);
+                            if(!is_snake(t)){
+                               ++x;
+                               break;
+                               }
+                            }
+                           else if(incr_y(t)==1){
+                            t=get_board_at(state,x,++y);
+                            if(!is_snake(t)){
+                               --y;
+                               break;
+                               }
+                            }
+                           else if(incr_y(t)==-1){
+                            t=get_board_at(state,x,--y);  
+                            if(!is_snake(t)){
+                               ++y;
+                               break;
+                               }
+                            }
+                        }
+                  state->snakes[i].head_x=x;
+                  state->snakes[i].head_y=y;
+                 }
   return;
 }
 
 /* Task 6.2 */
 game_state_t* initialize_snakes(game_state_t* state) {
   // TODO: Implement this function.
-  return NULL;
+  state->snakes=(snake_t*)malloc(sizeof(snake_t)*4);
+  
+  int num=-1;
+  for(int y=0;y<state->y_size;y++)
+     for(int x=0;x<state->x_size;x++){
+         if(is_tail(get_board_at(state,x,y))){
+            num++;
+            state->snakes[num].tail_x=x;
+            state->snakes[num].tail_y=y;
+          }
+     }
+   state->num_snakes=num+1;
+  return state;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
