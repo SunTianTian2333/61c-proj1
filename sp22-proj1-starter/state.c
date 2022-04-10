@@ -158,29 +158,32 @@ static char next_square(game_state_t* state, int snum) {
          if(is_tail(get_board_at(state,x,y)))
             num++;
          if(num==snum){
+         for(int i=0;i<state->num_snakes;i++){
            t=get_board_at(state,x,y);
-           while(is_snake(t)){
+           if(state->snakes[i].tail_x==x&&y==state->snakes[i].tail_y){
+                t=get_board_at(state,state->snakes[i].head_x,state->snakes[i].head_y);
                 if(incr_x(t)==1){
-                   t=state->board[y][++x];
+                   t=state->board[state->snakes[i].head_y][state,state->snakes[i].head_x+1];
                    }
                 else if(incr_x(t)==-1){
-                   t=state->board[y][--x];
+                   t=state->board[state->snakes[i].head_y][state,state->snakes[i].head_x-1];
                    }
                 if(incr_y(t)==1){
-                   t=state->board[++y][x];
+                   t=state->board[state->snakes[i].head_y+1][state,state->snakes[i].head_x];
                    }
                 else if(incr_y(t)==-1){
-                   t=state->board[--y][x];
+                   t=state->board[state->snakes[i].head_y-1][state,state->snakes[i].head_x];
                    }
-                if(t=='x')
-                  break;
-          
+                
+                  
+                return t;
                }
-            return t;
+            
          }              
      }     
 }
-
+return t;
+}
 /* Task 4.3 */
 static void update_head(game_state_t* state, int snum) {
   // TODO: Implement this function.
@@ -191,28 +194,51 @@ static void update_head(game_state_t* state, int snum) {
          if(is_tail(get_board_at(state,x,y)))
             num++;
          if(num==snum){
-           for(int i=0;i<state->num_snakes;i++)
+           for(int i=0;i<state->num_snakes;i++)     //pipei
            {
               if(state->snakes[i].tail_y==y&&state->snakes[i].tail_x==x){
                    t=get_board_at(state,state->snakes[i].head_x,state->snakes[i].head_y);
-   
+      
                    if(incr_x(t)==1){
+                       if(is_snake(next_square(state,num))||next_square(state,num)=='#'){
+                          state->board[state->snakes[i].head_y][state->snakes[i].head_x]='x';
+                          state->snakes[i].live=false;
+                       }else{
                        state->board[state->snakes[i].head_y][state->snakes[i].head_x+1]=t;
                        state->snakes[i].head_x+=1;
+                       }
                    }
                    else if(incr_x(t)==-1){
+                       if(is_snake(next_square(state,num))||next_square(state,num)=='#'){
+                          state->board[state->snakes[i].head_y][state->snakes[i].head_x]='x';
+                          state->snakes[i].live=false;
+                          }
+                       else{
                        state->board[state->snakes[i].head_y][state->snakes[i].head_x-1]=t;
                        state->snakes[i].head_x-=1;
+                       }
                    }
                    if(incr_y(t)==1){
+                       if(is_snake(next_square(state,num))||next_square(state,num)=='#'){
+                          state->board[state->snakes[i].head_y][state->snakes[i].head_x]='x';
+                          state->snakes[i].live=false;
+                          }
+                       else{   
                        state->board[state->snakes[i].head_y+1][state->snakes[i].head_x]=t;
                        state->snakes[i].head_y+=1;
+                       }
                    }
                    else if(incr_y(t)==-1){
+                       if(is_snake(next_square(state,num))||next_square(state,num)=='#'){
+                          state->board[state->snakes[i].head_y][state->snakes[i].head_x]='x';
+                          state->snakes[i].live=false;
+                          }
+                       else {   
                        state->board[state->snakes[i].head_y-1][state->snakes[i].head_x]=t;
                        state->snakes[i].head_y-=1;
+                       }
                    }          
-                 
+                   
              }  
           }
          } 
@@ -293,12 +319,29 @@ static void update_tail(game_state_t* state, int snum) {
 /* Task 4.5 */
 void update_state(game_state_t* state, int (*add_food)(game_state_t* state)) {
   // TODO: Implement this function.
+  int num=4;
+  for(int i=0;i<num;i++){
+      char t =next_square(state,i);
+      if(t=='*'){
+        update_head(state,i);
+        add_food(state);
+      }
+      else if(is_snake(t)||t=='#')
+             update_head(state,i);
+      else {
+      update_head(state,i);
+      update_tail(state,i);
+      }
+              
+  }            
   return;
 }
 
 /* Task 5 */
 game_state_t* load_board(char* filename) {
   // TODO: Implement this function.
+  int x=20;
+  int y=20;
   return NULL;
 }
 
