@@ -319,8 +319,7 @@ static void update_tail(game_state_t* state, int snum) {
 /* Task 4.5 */
 void update_state(game_state_t* state, int (*add_food)(game_state_t* state)) {
   // TODO: Implement this function.
-  int num=4;
-  for(int i=0;i<num;i++){
+  for(int i=0;i<state->num_snakes;i++){
       char t =next_square(state,i);
       if(t=='*'){
         update_head(state,i);
@@ -378,9 +377,12 @@ game_state_t* load_board(char* filename) {
 /* Task 6.1 */
 static void find_head(game_state_t* state, int snum) {
   // TODO: Implement this function.
+  int num=-1;
   for(int y=0;y<state->y_size;y++)
      for(int x=0;x<state->x_size;x++)
-         if(is_tail(get_board_at(state,x,y)))
+         if(is_tail(get_board_at(state,x,y))){
+             num++;
+          if(num==snum) 
             for(int i=0;i<state->num_snakes;i++)
                 if(state->snakes[i].tail_x==x&&state->snakes[i].tail_y==y){
                   char t=get_board_at(state,x,y);
@@ -417,6 +419,7 @@ static void find_head(game_state_t* state, int snum) {
                   state->snakes[i].head_x=x;
                   state->snakes[i].head_y=y;
                  }
+       }
   return;
 }
 
@@ -430,11 +433,14 @@ game_state_t* initialize_snakes(game_state_t* state) {
      for(int x=0;x<state->x_size;x++){
          if(is_tail(get_board_at(state,x,y))){
             num++;
+            state->num_snakes=num+1;
             state->snakes[num].tail_x=x;
             state->snakes[num].tail_y=y;
+            find_head(state,num);
+            state->snakes[num].live=true;
           }
      }
-   state->num_snakes=num+1;
+   
   return state;
 }
 
